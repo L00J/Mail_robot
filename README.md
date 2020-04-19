@@ -8,6 +8,13 @@
 
 ![Python](https://img.shields.io/badge/python-3.6+-blue.svg?style=plastic)
 
+## 发送指令到监听邮箱
+
+```mail
+task: curl_bash
+# 邮件的body内容格式 task：[my.conf定义的任务名]
+```
+
 ## 执行任务
 
 ```bash
