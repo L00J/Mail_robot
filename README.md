@@ -33,7 +33,7 @@ Bind_Sender = admin@xxxx.club
 shutdown = shutdown -s -f -t 1
 ```
 
-## 执行任务
+## 运行程序
 
 ```bash
 sudo python main.py
