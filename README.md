@@ -16,11 +16,21 @@ pip install jinja2  beautifulsoup4
 
 
 
-### 发送指令到监听邮箱
+### my.conf
 
 ```mail
-curl_bash
-# 邮件的body内容格式 task：[my.conf定义的任务名]
+[mail]
+# 账号密码
+SMTP_HOST = smtp.exmail.qq.com
+IMAP_HOST= imap.exmail.qq.com
+email = alert@xxxx.com
+password = xxxxxx
+# 只读取信任的邮箱发送的指令
+Bind_Sender = admin@xxxx.club
+
+[task]
+脚本1 =  bash /root/sh
+shutdown = shutdown -s -f -t 1
 ```
 
 ## 执行任务
