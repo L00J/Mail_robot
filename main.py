@@ -4,7 +4,7 @@
 @Author: 以谁为师
 @Website: attacker.club
 @Date: 2020-04-19 21:22:55
-@LastEditTime: 2020-04-24 08:05:35
+@LastEditTime: 2020-04-25 22:26:28
 @Description:
 '''
 from bin.sendermail import send
@@ -42,7 +42,7 @@ class Mail_helper():
     def __init__(self):
         super().__init__()
         self.results = {}
-        self.host = mailconf['IMAP_HOST']
+        self.imap_server = mailconf['IMAP_HOST']
         self.email = mailconf['email']
         self.password = mailconf['password']
         self.smtp = mailconf['SMTP_HOST']
@@ -51,59 +51,66 @@ class Mail_helper():
         """
         提取邮件
         """
-        server = imaplib.IMAP4_SSL(port='993', host=self.host)
-        print('已连接服务器')
+        print("[+]信任的邮箱:%s" % mailconf['Bind_Mail'])
+        server = imaplib.IMAP4_SSL(port='993', host=self.imap_server)
+        print('[+]已连接服务器')
 
         try:
             res = server.login(self.email, self.password)
-            print('成功登陆邮箱')
+            print('[+]成功登陆邮箱')
         except Exception as e:
-            print("登录失败", e)
+            print("[-]登录邮箱失败", e)
             sys.exit(1)
 
         server.select()
         email_count = len(server.search('ALL')[1][0].split())
-        print("待处理邮件: %d" % email_count)
 
         if email_count > 0:
+            print("[+]待处理邮件: %d" % email_count)
             typ, email_content = server.fetch(
                 f'{email_count}'.encode(), '(RFC822)')
             email_content = email_content[0][1].decode()
-
+            # 经过parsestr处理过后生成一个字典
             msg = Parser().parsestr(email_content)
-            print("邮件类型: %s" % msg.get_content_type())
-            self.mail_from = re.findall(r'<(.*?)>', msg['From'])[0]
-            print("发件人: %s" % self.mail_from)
-
             html = msg.get_payload(decode=True)
-
             soup = BeautifulSoup(html, 'lxml')
             body = soup.find('div').text
             body = body.split()[0]
+            print("邮件类型: %s" % msg.get_content_type())
             print("邮件内容: %s" % body)
-            print(mailconf['Bind_Sender'])
-            if self.mail_from in mailconf['Bind_Sender']:
-                print("这是一封有效的指令! From %s" % self.mail_from)
-                print('[+] 发件人:%s' % self.mail_from)
 
-                self.results['sender'] = self.mail_from
+            re_from = re.findall(r'<(.*?)>', msg['From'])[0]
+            self.results["re_From"] = re_from
+            print("发件人: %s" % re_from)
+            if re_from in mailconf['Bind_Mail']:
+                self.results["From"] = msg["From"].split()
+                if msg["Cc"]:
+                    re_Cc = re.findall(
+                        r'<(.*?)>', msg['Cc'])[0]
+                    self.results["re_Cc"] = re_Cc
+                    self.results["Cc"] = msg["Cc"].split()
+                    print("抄送邮件: %s" % re_Cc)
+
+                self.results['Bind_Mail'] = re_from
+                print("Bind_Mail: %s" % self.results['Bind_Mail'])
                 for key in taskconf:
                     if key in body:
                         self.results["task"] = key
                         self.results["code"] = taskconf[key]
 
-            else:
-                print("非授信的邮件!")
-        else:
-            print('没有邮件处理')
+                    # 根据最新id删除邮件
+                    server.store(str(email_count), '+FLAGS', '\\Deleted')
+                    server.expunge()
 
-        # 根据最新id删除邮件
-        server.store(str(email_count), '+FLAGS', '\\Deleted')
-        server.expunge()
+                else:
+                    print("[-]待处理邮件: %d" % email_count)
+                    print("[-]非授信的邮件!")
+        else:
+            print('[-]没有邮件处理 ~')
 
         server.close
         server.logout
-        print("登出邮件系统")
+        print("[+]登出邮件系统 ~")
 
     def exec(self):
         """
@@ -120,15 +127,16 @@ class Mail_helper():
         """
         反馈邮件
         """
-        if 'sender' in self.results.keys():
-            ret = send(self.mail_from, self.email,
-                       self.password, self.smtp, self.results)
+        # 判断邮箱是否受到信任
+        if 'Bind_Mail' in self.results.keys():
+            ret = send(self.smtp, self.email, self.password, self.results)
             if ret:
-                print("邮件发送成功")
+                print("[+]邮件发送成功")
             else:
-                print("邮件发送失败")
+                print("[-]邮件发送失败")
+
         else:
-            print("没有发件人")
+            print("[-]不发送邮件 ~")
 
 
 if __name__ == '__main__':
@@ -148,5 +156,8 @@ if __name__ == '__main__':
 
         print(M.results.items())
         M.results.clear()
-        time.sleep(10)
-        print("继续监听邮件...")
+        for num in range(10, 0, -1):
+            time.sleep(1)
+            print(num)
+
+        print("[+]继续监听邮件...")
