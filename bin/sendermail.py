@@ -4,7 +4,7 @@
 @Author: 以谁为师
 @Website: attacker.club
 @Date: 2020-04-20 22:16:53
-@LastEditTime: 2020-04-26 11:22:00
+@LastEditTime: 2020-04-26 11:31:39
 @Description:
 '''
 import jinja2
@@ -100,12 +100,12 @@ def send(smtp, email, password, results):
 
         msg['To'] = formataddr(
             [results["From"][0], mail_user])
-        print(msg['To'])
+        # print(msg['To'])
         if "Cc" in results:           # 抄送邮件
             mail_cc = results["re_Cc"]
             msg['Cc'] = formataddr(
                 [results["Cc"][0], mail_cc])
-            print(msg['Cc'])
+            # print(msg['Cc'])
             send_info = [mail_user] + [mail_cc]
         else:
             send_info = [mail_user]
