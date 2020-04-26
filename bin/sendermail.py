@@ -4,7 +4,7 @@
 @Author: 以谁为师
 @Website: attacker.club
 @Date: 2020-04-20 22:16:53
-@LastEditTime: 2020-04-25 22:13:51
+@LastEditTime: 2020-04-26 11:22:00
 @Description:
 '''
 import jinja2
@@ -100,11 +100,12 @@ def send(smtp, email, password, results):
 
         msg['To'] = formataddr(
             [results["From"][0], mail_user])
-
-        if results["Cc"]:           # 抄送邮件
+        print(msg['To'])
+        if "Cc" in results:           # 抄送邮件
             mail_cc = results["re_Cc"]
             msg['Cc'] = formataddr(
                 [results["Cc"][0], mail_cc])
+            print(msg['Cc'])
             send_info = [mail_user] + [mail_cc]
         else:
             send_info = [mail_user]
@@ -116,7 +117,7 @@ def send(smtp, email, password, results):
         server.sendmail(mail_sender, send_info, msg.as_string())
         server.quit()  # 关闭连接
     except Exception as e:  # 如果 try 中的语句没有执行，则会执行下面的 ret=False
-        print(e)
+        print("error: %s" % e)
         ret = False
     return ret
 

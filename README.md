@@ -11,10 +11,8 @@
 ![beautifulsoup4](https://img.shields.io/badge/beautifulsoup4-4.9.0+-blue.svg?style=plastic)
 
 ```bash
-pip install jinja2  beautifulsoup4
+pip install jinja2  beautifulsoup4 lxml
 ```
-
-
 
 ### my.conf
 
@@ -42,12 +40,12 @@ sudo python main.py
 打印输出
 
 ```log
-已连接服务器
-成功登陆邮箱
-待处理邮件: 0
-没有邮件处理
-登出邮件系统
-没有发件人
+[+]信任的邮箱:jjli@seedien.com
+[+]已连接服务器
+[+]成功登陆邮箱
+[-]没有邮件处理 ~
+[+]登出邮件系统 ~
+[-]不发送邮件 ~
 dict_items([('task', 'Null'), ('code', '未接收到命令!!!')])
 继续监听邮件...
 ```
@@ -59,3 +57,6 @@ dict_items([('task', 'Null'), ('code', '未接收到命令!!!')])
 
 **返回处理结果:**
 ![返回](doc/return.jpeg)
+
+**支持抄送:**
+![返回](doc/cc.jpeg)
