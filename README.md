@@ -40,7 +40,7 @@ sudo python main.py
 打印输出
 
 ```log
-[+]信任的邮箱:jjli@seedien.com
+[+]信任的邮箱:xxx@xxx.com,abc@qq.com
 [+]已连接服务器
 [+]成功登陆邮箱
 [-]没有邮件处理 ~
